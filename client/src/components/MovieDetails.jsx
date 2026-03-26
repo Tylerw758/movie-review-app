@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getMovieById } from "./services/api";
+import { getMovieById } from "../services/api";
 import { useParams } from "react-router-dom";
 
 export default function MovieDetails() {
