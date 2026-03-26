@@ -10,8 +10,7 @@ export const registerUser = (credentials) =>
   axios.post(`${API_URL}/auth/register`, credentials);
 
 // Movies
-export const getMovies = () =>
-  axios.get(`${API_URL}/movies`);
+export const getMovies = () => axios.get(`${API_URL}/movies`);
 
 export const getMovieById = (id) =>
   axios.get(`${API_URL}/movies/${id}`);

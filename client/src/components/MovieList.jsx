@@ -5,17 +5,25 @@ export default function MovieList() {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    async function fetchMovies() {
-      try {
-        const res = await getMovies();
-        setMovies(res.data);
-      } catch (err) {
-        console.error(err);
-      }
+  async function fetchMovies() {
+    try {
+      const res = await getMovies();
+      console.log("DATA FROM BACKEND:", res.data); 
+      setMovies(res.data);
+    } catch (err) {
+      console.error("ERROR:", err);
     }
-    fetchMovies();
-  }, []);
+  }
+  fetchMovies();
+}, []);
 
+return (
+  <div>
+    <h1>Movies List</h1>
+    <pre>{JSON.stringify(movies, null, 2)}</pre>
+  </div>
+);
+/*
   return (
     <div>
       <h1>Movies List</h1>
@@ -31,3 +39,4 @@ export default function MovieList() {
     </div>
   );
 }
+*/}
