@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
 
-const movieSchema = new mongoose.Schema(
-  {
-    title: { type: String, required: true },
-    description: String,
-    releaseYear: Number,
-    genres: [{ type: mongoose.Schema.Types.ObjectId, ref: "Genre" }]
-  },
-  { timestamps: true }
-);
+const movieSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  year: Number,
+  genre: String,
+  description: String
+});
 
 export default mongoose.model("Movie", movieSchema);
