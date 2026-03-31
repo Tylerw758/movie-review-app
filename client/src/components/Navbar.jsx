@@ -1,22 +1,18 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
 export default function Navbar() {
-  const token = localStorage.getItem("token");
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    window.location.href = "/login";
-  };
-
   return (
-    <nav>
-      <Link to="/">Home</Link>
-      {!token && <Link to="/login">Login</Link>}
-      {!token && <Link to="/register">Register</Link>}
-      {token && <button onClick={handleLogout}>Logout</button>}
-      {localStorage.getItem("role") === "admin" && <Link to="/admin">Admin</Link>}
-    </nav>
+    <header className="site-header">
+      <div className="header-left">
+        <h1 className="logo">🎟 MovieReview Theater</h1>
+        <p className="tagline">Classic reviews. Cozy cinema vibes.</p>
+      </div>
+
+      <nav className="navbar">
+        <a href="#home">Home</a>
+        <a href="#movies">Movies</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#watchlist">Watchlist</a>
+        <a href="#admin">Admin</a>
+      </nav>
+    </header>
   );
 }
