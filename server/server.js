@@ -1,3 +1,7 @@
+/*
+  Main server file.
+*/
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -9,19 +13,25 @@ dotenv.config();
 
 const app = express();
 
+// Connect to MongoDB
 connectDB();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// test
+// Simple test route
 app.get("/", (req, res) => {
   res.send("API is running");
 });
 
+// Routes
 app.use("/movies", movieRoutes);
 app.use("/api/auth", authRoutes);
 
+// Start server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
