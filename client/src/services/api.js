@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000"; 
+const API_URL = "http://localhost:5001/api"; 
 
 // Auth
 export const loginUser = (credentials) =>
@@ -8,6 +8,13 @@ export const loginUser = (credentials) =>
 
 export const registerUser = (credentials) =>
   axios.post(`${API_URL}/auth/register`, credentials);
+
+export const getProfile = (token) =>
+  axios.get(`${API_URL}/auth/profile`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
 // Movies
 export const getMovies = () => axios.get(`${API_URL}/movies`);

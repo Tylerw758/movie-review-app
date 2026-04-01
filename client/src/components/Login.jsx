@@ -6,12 +6,30 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+    
+    // Check so User doesn't submit empty fields
+    if (!username || !password) {
+      alert("Please enter username and password");
+      return;
+    }
+
     try {
       const res = await loginUser({ username, password });
       localStorage.setItem("token", res.data.token);
+
+      // Saves user info 
+      localStorage.setItem("user", JSON.stringify(res.data));
+
+      console.log("Logged in user:", res.data);
+
       alert("Logged in!");
     } catch (err) {
-      alert("Login failed");
+      console.error("Login error", err);
+
+      const message =
+        err.response?.data?.message || err.message || "Login failed";
+
+      alert(message);
     }
   };
 
