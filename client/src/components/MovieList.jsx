@@ -60,8 +60,8 @@ export default function MovieList() {
             <option value="Fantasy">Fantasy</option>
             <option value="Sci-Fi">Sci-Fi</option>
             <option value="Romance">Romance</option>
-            <option value="Western">Romance</option>
-            <option value="Short">Romance</option>
+            <option value="Western">Western</option>
+            <option value="Short">Short</option>
           </select>
         </div>
 
