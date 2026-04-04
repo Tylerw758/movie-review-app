@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import movieRoutes from "./routes/movieRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import genreRoutes from "./routes/genreRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/movies", movieRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/genres", genreRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

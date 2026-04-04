@@ -1,5 +1,4 @@
 export default function Navbar() {
-
   // Get user from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -25,7 +24,7 @@ export default function Navbar() {
         <a href="#movies">Movies</a>
         <a href="#reviews">Reviews</a>
         <a href="#watchlist">Watchlist</a>
-        <a href="#admin">Admin</a>
+        {user?.role === "admin" && <a href="#admin">Admin</a>}
 
         {/* Show logout only if user is logged in */}
         {user && (
@@ -33,7 +32,6 @@ export default function Navbar() {
             Logout
           </button>
         )}
-        
       </nav>
     </header>
   );
