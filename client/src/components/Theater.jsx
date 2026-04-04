@@ -4,8 +4,7 @@ import Hero from "./Hero";
 import MovieList from "./MovieList";
 import Login from "./Login";
 import Dashboard from "./Dashboard";
-import Reviews from "./Reviews";
-import Watchlist from "./Watchlist";
+
 import AdminPanel from "./AdminPanel";
 
 export default function Theater() {
@@ -18,8 +17,6 @@ export default function Theater() {
       <Login />
       <Dashboard />
       <MovieList />
-      <Reviews />
-      <Watchlist />
       {user?.role === "admin" && <AdminPanel />}
     </>
   );

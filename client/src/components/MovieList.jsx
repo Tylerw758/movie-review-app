@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMovies, getGenres } from "../services/api";
 import MovieCard from "./MovieCard";
-
+import Reviews from "./Reviews";
 export default function MovieList() {
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -105,7 +105,8 @@ export default function MovieList() {
           </div>
         </div>
       </section>
-
+      <Reviews selectedMovie={selectedMovie} />
+      
       {/* WATCHLIST */}
       <section className="panel-section" id="watchlist">
         <h2 className="section-title">Watchlist</h2>

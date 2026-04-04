@@ -37,6 +37,14 @@ const movieSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+    reviews: [
+      {
+        username: String,
+        rating: Number,
+        comment: String,
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );
