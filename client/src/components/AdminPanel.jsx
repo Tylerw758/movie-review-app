@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
-import { createMovie, getMovies, updateMovie, deleteMovie } from "../services/api";
+import {
+  createMovie,
+  getMovies,
+  updateMovie,
+  deleteMovie,
+  getGenres,
+} from "../services/api";
 
 export default function AdminPanel() {
   const token = localStorage.getItem("token");
 
   const [movie, setMovie] = useState({
     title: "",
-    year: "",
-    genres: "",
-    plot: ""
+    description: "",
+    releaseYear: "",
+    director: "",
+    posterUrl: "",
+    genreIds: [],
   });
 
   const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [editingId, setEditingId] = useState(null);
 
   const fetchMovies = async () => {
@@ -23,14 +32,36 @@ export default function AdminPanel() {
     }
   };
 
+  const fetchGenres = async () => {
+    try {
+      const res = await getGenres();
+      setGenres(res.data);
+    } catch (err) {
+      console.error("Error fetching genres:", err);
+    }
+  };
+
   useEffect(() => {
     fetchMovies();
+    fetchGenres();
   }, []);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setMovie({
       ...movie,
-      [e.target.name]: e.target.value
+      [name]: value,
+    });
+  };
+
+  const handleGenreChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions).map(
+      (option) => option.value
+    );
+
+    setMovie({
+      ...movie,
+      genreIds: selectedOptions,
     });
   };
 
@@ -40,9 +71,11 @@ export default function AdminPanel() {
     try {
       const movieData = {
         title: movie.title,
-        year: Number(movie.year),
-        genres: movie.genres.split(",").map((g) => g.trim()),
-        plot: movie.plot
+        description: movie.description,
+        releaseYear: Number(movie.releaseYear),
+        director: movie.director,
+        posterUrl: movie.posterUrl,
+        genreIds: movie.genreIds,
       };
 
       if (editingId) {
@@ -55,9 +88,11 @@ export default function AdminPanel() {
 
       setMovie({
         title: "",
-        year: "",
-        genres: "",
-        plot: ""
+        description: "",
+        releaseYear: "",
+        director: "",
+        posterUrl: "",
+        genreIds: [],
       });
 
       setEditingId(null);
@@ -71,9 +106,11 @@ export default function AdminPanel() {
   const handleEdit = (movieToEdit) => {
     setMovie({
       title: movieToEdit.title || "",
-      year: movieToEdit.year || "",
-      genres: movieToEdit.genres ? movieToEdit.genres.join(", ") : "",
-      plot: movieToEdit.plot || ""
+      description: movieToEdit.description || "",
+      releaseYear: movieToEdit.releaseYear || "",
+      director: movieToEdit.director || "",
+      posterUrl: movieToEdit.posterUrl || "",
+      genreIds: movieToEdit.genreIds ? movieToEdit.genreIds.map((g) => g._id) : [],
     });
 
     setEditingId(movieToEdit._id);
@@ -106,26 +143,48 @@ export default function AdminPanel() {
 
         <input
           type="number"
-          name="year"
-          placeholder="Year"
-          value={movie.year}
+          name="releaseYear"
+          placeholder="Release Year"
+          value={movie.releaseYear}
           onChange={handleChange}
           required
         />
 
         <input
           type="text"
-          name="genres"
-          placeholder="Genres (comma separated)"
-          value={movie.genres}
+          name="director"
+          placeholder="Director"
+          value={movie.director}
           onChange={handleChange}
           required
         />
 
+        <input
+          type="text"
+          name="posterUrl"
+          placeholder="Poster URL"
+          value={movie.posterUrl}
+          onChange={handleChange}
+        />
+
+        <select
+          multiple
+          name="genreIds"
+          value={movie.genreIds}
+          onChange={handleGenreChange}
+          required
+        >
+          {genres.map((genre) => (
+            <option key={genre._id} value={genre._id}>
+              {genre.name}
+            </option>
+          ))}
+        </select>
+
         <textarea
-          name="plot"
-          placeholder="Plot description"
-          value={movie.plot}
+          name="description"
+          placeholder="Movie description"
+          value={movie.description}
           onChange={handleChange}
           required
         />
@@ -135,22 +194,23 @@ export default function AdminPanel() {
         </button>
 
         {editingId && (
-  <button
-    type="button"
-    onClick={() => {
-      setMovie({
-        title: "",
-        year: "",
-        genres: "",
-        plot: ""
-      });
-      setEditingId(null);
-    }}
-  >
-    Cancel Edit
-  </button>
-)}
-
+          <button
+            type="button"
+            onClick={() => {
+              setMovie({
+                title: "",
+                description: "",
+                releaseYear: "",
+                director: "",
+                posterUrl: "",
+                genreIds: [],
+              });
+              setEditingId(null);
+            }}
+          >
+            Cancel Edit
+          </button>
+        )}
       </form>
 
       <div className="admin-movie-list">
@@ -159,7 +219,7 @@ export default function AdminPanel() {
         {movies.map((m) => (
           <div key={m._id} className="admin-movie-item">
             <p>
-              <strong>{m.title}</strong> ({m.year})
+              <strong>{m.title}</strong> ({m.releaseYear})
             </p>
 
             <button onClick={() => handleEdit(m)}>Edit</button>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5001/api"; 
+const API_URL = "http://localhost:5001/api";
 
 // Auth
 export const loginUser = (credentials) =>
@@ -34,5 +34,13 @@ export const updateMovie = (id, movie, token) =>
 
 export const deleteMovie = (id, token) =>
   axios.delete(`${API_URL}/movies/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+// Genres
+export const getGenres = () => axios.get(`${API_URL}/genres`);
+
+export const createGenre = (genre, token) =>
+  axios.post(`${API_URL}/genres`, genre, {
     headers: { Authorization: `Bearer ${token}` },
   });

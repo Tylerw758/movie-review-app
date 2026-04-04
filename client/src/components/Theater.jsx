@@ -9,6 +9,8 @@ import Watchlist from "./Watchlist";
 import AdminPanel from "./AdminPanel";
 
 export default function Theater() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <>
       <Navbar />
@@ -18,7 +20,7 @@ export default function Theater() {
       <MovieList />
       <Reviews />
       <Watchlist />
-      <AdminPanel />
+      {user?.role === "admin" && <AdminPanel />}
     </>
   );
 }

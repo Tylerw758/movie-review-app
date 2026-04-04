@@ -6,6 +6,8 @@ import {
   updateMovie,
   deleteMovie
 } from "../controllers/movieController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import roleMiddleware from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
@@ -13,12 +15,12 @@ const router = express.Router();
 router.get("/", getMovies);
 
 // Create movie
-router.post("/", createMovie);
+router.post("/", authMiddleware, roleMiddleware("admin"), createMovie);
 
 // Update movie
-router.put("/:id", updateMovie);
+router.put("/:id", authMiddleware, roleMiddleware("admin"), updateMovie);
 
 // Delete movie
-router.delete("/:id", deleteMovie);
+router.delete("/:id", authMiddleware, roleMiddleware("admin"), deleteMovie);
 
 export default router;
