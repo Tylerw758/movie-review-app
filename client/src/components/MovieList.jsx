@@ -12,15 +12,19 @@ export default function MovieList() {
 
   useEffect(() => {
     const fetchMovies = async () => {
+      try{
       const res = await getMovies();
       setMovies(res.data);
+      }catch (err) {
+        console.error("Error loading movies:", err);
+      }
     };
     fetchMovies();
   }, []);
 
   const filteredMovies = movies.filter((movie) => {
     const matchesSearch = movie.title.toLowerCase().includes(search.toLowerCase());
-    const matchesGenre = genre === "all" || movie.genre === genre;
+    const matchesGenre = genre === "all" || movie.genres?.includes(genre);
     return matchesSearch && matchesGenre;
   });
 
@@ -56,6 +60,8 @@ export default function MovieList() {
             <option value="Fantasy">Fantasy</option>
             <option value="Sci-Fi">Sci-Fi</option>
             <option value="Romance">Romance</option>
+            <option value="Western">Romance</option>
+            <option value="Short">Romance</option>
           </select>
         </div>
 
@@ -81,9 +87,9 @@ export default function MovieList() {
             {selectedMovie ? (
               <>
                 <h3>{selectedMovie.title}</h3>
-                <p><strong>Genre:</strong> {selectedMovie.genre}</p>
+                <p><strong>Genre:</strong> {selectedMovie.genres?.join(", ")}</p>
                 <p><strong>Year:</strong> {selectedMovie.year}</p>
-                <p><strong>Rating:</strong> {selectedMovie.rating}</p>
+                <p><strong>Rating:</strong> {selectedMovie.imdb?.rating}</p>
               </>
             ) : (
               <h3>Select a movie ticket</h3>

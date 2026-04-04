@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use("/movies", movieRoutes);
+app.use("/api/movies", movieRoutes);
 app.use("/api/auth", authRoutes);
 
 // Start server

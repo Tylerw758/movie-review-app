@@ -10,7 +10,7 @@ export default function MovieCard({ movie, onSelect, onWatchlist }) {
 
       <div className="ticket-right">
         <h3>{movie.title}</h3>
-        <p><strong>Genre:</strong> {movie.genre}</p>
+        <p><strong>Genre:</strong> {movie.genres?.join(", ")}</p>
         <p><strong>Year:</strong> {movie.year}</p>
 
         <div className="ticket-button-row">
