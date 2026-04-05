@@ -100,4 +100,38 @@ router.delete("/:movieId/reviews/:reviewId", async (req, res) => {
   }
 });
 
+
+// Edit a review
+router.put("/:movieId/reviews/:reviewId", async (req, res) => {
+  try {
+    const { movieId, reviewId } = req.params;
+    const { rating, comment, username } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(movieId) || !mongoose.Types.ObjectId.isValid(reviewId)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
+    const movie = await Movie.findById(movieId);
+    if (!movie) return res.status(404).json({ message: "Movie not found" });
+
+    const review = movie.reviews.id(reviewId);
+    if (!review) return res.status(404).json({ message: "Review not found" });
+
+    // Make sure the user owns the review
+    if (review.username !== username) {
+      return res.status(403).json({ message: "Not allowed to edit this review" });
+    }
+
+    // Update the fields
+    review.rating = rating ?? review.rating;
+    review.comment = comment ?? review.comment;
+
+    await movie.save();
+    res.json(review);
+  } catch (err) {
+    console.error("EDIT REVIEW ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
