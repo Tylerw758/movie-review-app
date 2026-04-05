@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+const currentUser = JSON.parse(localStorage.getItem("user"))?.username;
 
 export default function Reviews({ selectedMovie }) {
   const [reviews, setReviews] = useState([]);
@@ -55,6 +56,23 @@ export default function Reviews({ selectedMovie }) {
     }
   };
 
+  const deleteReview = async (reviewId) => {
+  try {
+    await axios.delete(
+      `http://localhost:5001/api/movies/${selectedMovie._id}/reviews/${reviewId}`,
+      { data: { username: currentUser } } // send username to verify
+    );
+
+    // Remove from state
+    setReviews((prev) => prev.filter((rev) => rev._id !== reviewId));
+  } catch (err) {
+    console.error("Error deleting review:", err);
+    alert("Failed to delete review");
+  }
+};
+
+
+
   return (
     <section className="panel-section" id="reviews">
       <h2 className="section-title">Reviews</h2>
@@ -71,6 +89,9 @@ export default function Reviews({ selectedMovie }) {
                   <h3>{rev.username}</h3>
                   <p><strong>Rating:</strong> {rev.rating}/5</p>
                   <p>{rev.comment}</p>
+                  {rev.username === currentUser && (
+                    <button onClick={() => deleteReview(rev._id)}>Delete</button>
+                  )}
                 </div>
               ))
             ) : (

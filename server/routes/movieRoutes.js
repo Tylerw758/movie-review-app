@@ -1,5 +1,5 @@
 import express from "express";
-
+import mongoose from "mongoose";
 import {
   getMovies,
   createMovie,
@@ -24,7 +24,6 @@ router.put("/:id", authMiddleware, roleMiddleware("admin"), updateMovie);
 // Delete movie
 router.delete("/:id", authMiddleware, roleMiddleware("admin"), deleteMovie);
 
-export default router;
 
 router.get("/:id/reviews", async (req, res) => {
   try {
@@ -69,3 +68,36 @@ router.post("/:id/reviews", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+  // DELETE a review
+router.delete("/:movieId/reviews/:reviewId", async (req, res) => {
+  try {
+    const { movieId, reviewId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(reviewId) || !mongoose.Types.ObjectId.isValid(movieId)) {
+  return res.status(400).json({ message: "Invalid ID" });
+}
+
+
+    const movie = await Movie.findById(movieId);
+    if (!movie) return res.status(404).json({ message: "Movie not found" });
+
+    const review = movie.reviews.id(reviewId); // works if each review has _id
+    if (!review) return res.status(404).json({ message: "Review not found" });
+
+    // Optional: check if username matches (basic auth check)
+    if (review.username !== req.body.username) {
+      return res.status(403).json({ message: "Not allowed to delete this review" });
+    }
+
+    movie.reviews.pull({ _id: reviewId });
+    await movie.save(); 
+
+    res.json({ message: "Review deleted" });
+  } catch (err) {
+    console.error("DELETE REVIEW ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+export default router;
