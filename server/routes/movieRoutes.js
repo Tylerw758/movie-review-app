@@ -8,7 +8,7 @@ import {
 } from "../controllers/movieController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
-
+import User from "../models/User.js";
 import Movie from "../models/Movie.js";
 const router = express.Router();
 
@@ -73,6 +73,7 @@ router.post("/:id/reviews", async (req, res) => {
 router.delete("/:movieId/reviews/:reviewId", async (req, res) => {
   try {
     const { movieId, reviewId } = req.params;
+    const { username } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(reviewId) || !mongoose.Types.ObjectId.isValid(movieId)) {
   return res.status(400).json({ message: "Invalid ID" });
@@ -86,10 +87,10 @@ router.delete("/:movieId/reviews/:reviewId", async (req, res) => {
     if (!review) return res.status(404).json({ message: "Review not found" });
 
     // Optional: check if username matches (basic auth check)
-    if (review.username !== req.body.username) {
-      return res.status(403).json({ message: "Not allowed to delete this review" });
-    }
-
+   const requestingUser = await User.findOne({ username });
+    if (review.username !== username && requestingUser?.role !== "admin") {
+    return res.status(403).json({ message: "Not allowed to delete this review" });
+}
     movie.reviews.pull({ _id: reviewId });
     await movie.save(); 
 
@@ -118,9 +119,10 @@ router.put("/:movieId/reviews/:reviewId", async (req, res) => {
     if (!review) return res.status(404).json({ message: "Review not found" });
 
     // Make sure the user owns the review
-    if (review.username !== username) {
-      return res.status(403).json({ message: "Not allowed to edit this review" });
-    }
+    const requestingUser = await User.findOne({ username });
+    if (review.username !== username && requestingUser?.role !== "admin") {
+    return res.status(403).json({ message: "Not allowed to edit this review" });
+}
 
     // Update the fields
     review.rating = rating ?? review.rating;

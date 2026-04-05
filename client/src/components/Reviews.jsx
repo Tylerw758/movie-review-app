@@ -10,7 +10,9 @@ export default function Reviews({ selectedMovie }) {
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("user"))?.username
   );
-
+  const [currentRole, setCurrentRole] = useState(
+  JSON.parse(localStorage.getItem("user"))?.role
+  );
   // Edit state
   const [editingId, setEditingId] = useState(null);
   const [editRating, setEditRating] = useState("");
@@ -20,6 +22,7 @@ export default function Reviews({ selectedMovie }) {
   useEffect(() => {
     const handleStorageChange = () => {
       setCurrentUser(JSON.parse(localStorage.getItem("user"))?.username);
+      setCurrentRole(JSON.parse(localStorage.getItem("user"))?.role);
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -129,7 +132,7 @@ export default function Reviews({ selectedMovie }) {
                       <h3>{rev.username}</h3>
                       <p><strong>Rating:</strong> {rev.rating}/5</p>
                       <p>{rev.comment}</p>
-                      {rev.username === currentUser && (
+                      {(rev.username === currentUser || currentRole === "admin") && (
                         <>
                           <button onClick={() => {
                             setEditingId(rev._id);
