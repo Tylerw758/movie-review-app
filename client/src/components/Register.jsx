@@ -15,12 +15,16 @@ export default function Register() {
     }
   };
 
-  return (
-    <div>
+return (
+  <section className="panel-section" id="register">
+    <div className="form-card">
       <h2>Register</h2>
       <input placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-      <input placeholder="Password" type="password" onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleRegister}>Register</button>
+      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+      <button className="primary-btn" onClick={handleRegister}>
+        Register
+      </button>
     </div>
-  );
+  </section>
+);
 }

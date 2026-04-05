@@ -1,16 +1,30 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-const currentUser = JSON.parse(localStorage.getItem("user"))?.username;
 
 export default function Reviews({ selectedMovie }) {
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
 
+ 
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem("user"))?.username
+  );
+
   // Edit state
   const [editingId, setEditingId] = useState(null);
   const [editRating, setEditRating] = useState("");
   const [editComment, setEditComment] = useState("");
+
+  
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setCurrentUser(JSON.parse(localStorage.getItem("user"))?.username);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   // Fetch reviews when a movie is selected
   useEffect(() => {
@@ -32,23 +46,23 @@ export default function Reviews({ selectedMovie }) {
 
   // Submit review
   const submitReview = async () => {
-  if (!comment) {
-    alert("Fill out all fields");
-    return;
-  }
+    if (!comment) {
+      alert("Fill out all fields");
+      return;
+    }
 
-  try {
-    const res = await axios.post(
-      `http://localhost:5001/api/movies/${selectedMovie._id}/reviews`,
-      { username: currentUser, rating, comment } 
-    );
-    setReviews((prev) => [...prev, res.data]);
-    setRating(5);
-    setComment("");
-  } catch (err) {
-    console.error("Error submitting review:", err);
-  }
-};
+    try {
+      const res = await axios.post(
+        `http://localhost:5001/api/movies/${selectedMovie._id}/reviews`,
+        { username: currentUser, rating, comment }
+      );
+      setReviews((prev) => [...prev, res.data]);
+      setRating(5);
+      setComment("");
+    } catch (err) {
+      console.error("Error submitting review:", err);
+    }
+  };
 
   // Delete review
   const deleteReview = async (reviewId) => {
@@ -95,7 +109,6 @@ export default function Reviews({ selectedMovie }) {
               reviews.map((rev, index) => (
                 <div key={index} className="review-card">
                   {editingId === rev._id ? (
-                    // Edit mode
                     <>
                       <input
                         type="number"
@@ -112,7 +125,6 @@ export default function Reviews({ selectedMovie }) {
                       <button onClick={() => setEditingId(null)}>Cancel</button>
                     </>
                   ) : (
-                    // Display mode
                     <>
                       <h3>{rev.username}</h3>
                       <p><strong>Rating:</strong> {rev.rating}/5</p>
@@ -143,6 +155,12 @@ export default function Reviews({ selectedMovie }) {
           {/* Add Review */}
           <div className="form-card" style={{ marginTop: "20px" }}>
             <h3>Write a Review</h3>
+            
+            {currentUser ? (
+              <p>Posting as: <strong>{currentUser}</strong></p>
+            ) : (
+              <p style={{ color: "red" }}>You must be logged in to post a review.</p>
+            )}
             <input
               type="number"
               min="1"
@@ -155,7 +173,7 @@ export default function Reviews({ selectedMovie }) {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <button className="primary-btn" onClick={submitReview}>
+            <button className="primary-btn" onClick={submitReview} disabled={!currentUser}>
               Submit Review
             </button>
           </div>
