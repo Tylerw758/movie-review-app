@@ -12,15 +12,22 @@ export default function MovieList() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [watchlist, setWatchlist] = useState([]);
   const [tab, setTab] = useState("want");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const currentUser = JSON.parse(localStorage.getItem("user"))?.username;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const movieRes = await getMovies();
-        setMovies(movieRes.data);
-        console.log("Movies loaded:", movieRes.data);
+        const params = { page };
+        if (search) params.search = search;
+        if (genre !== "all") params.genre = genre;
+
+        const movieRes = await getMovies(params);
+        setMovies(movieRes.data.movies || []);
+        setTotalPages(movieRes.data.totalPages || 1);
+        console.log("Movies loaded:", movieRes.data.movies || []);
       } catch (err) {
         console.error("Error loading movies:", err);
       }
@@ -35,7 +42,11 @@ export default function MovieList() {
     };
 
     fetchData();
-  }, []);
+  }, [search, genre, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, genre]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -183,6 +194,28 @@ export default function MovieList() {
           ) : (
             <p>No movies match your filters.</p>
           )}
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "30px" }}>
+          <button
+            className="secondary-btn"
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+          >
+            ← Prev
+          </button>
+
+          <span style={{ alignSelf: "center" }}>
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            className="secondary-btn"
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+          >
+            Next →
+          </button>
         </div>
       </section>
 
