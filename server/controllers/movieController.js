@@ -4,8 +4,32 @@ import Genre from "../models/Genre.js";
 // Get all movies
 export const getMovies = async (req, res) => {
   try {
-    const movies = await Movie.find().populate("genreIds", "name description");
-    res.json(movies);
+    const { search, genre, page = 1 } = req.query;
+    const limit = 9;
+    const skip = (page - 1) * limit;
+
+    // Build filter object
+    const filter = {};
+
+    if (search) {
+      filter.title = { $regex: search, $options: "i" };
+    }
+
+    if (genre) {
+      // Find the genre ObjectId by name first
+      const genreDoc = await Genre.findOne({ name: genre });
+      if (genreDoc) {
+        filter.genreIds = genreDoc._id;
+      }
+    }
+
+    const total = await Movie.countDocuments(filter);
+    const movies = await Movie.find(filter)
+      .populate("genreIds", "name description")
+      .skip(skip)
+      .limit(limit);
+
+    res.json({ movies, total, page: Number(page), totalPages: Math.ceil(total / limit) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

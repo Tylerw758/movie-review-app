@@ -16,8 +16,10 @@ export const getProfile = (token) =>
     },
   });
 
+
 // Movies
-export const getMovies = () => axios.get(`${API_URL}/movies`);
+export const getMovies = (params = {}) =>
+  axios.get(`${API_URL}/movies`, { params });
 
 export const getMovieById = (id) =>
   axios.get(`${API_URL}/movies/${id}`);
