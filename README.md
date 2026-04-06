@@ -1,4 +1,4 @@
-﻿# WebDevGroup_Project
+﻿# MovieReviewApp
 Description: This project is a full-stack web application built using the MERN stack (MongoDB, Express.js, React, Node.js). The application allows users to create accounts, log in, and interact with a movie review system. Users can browse movies and leave reviews, while administrators have additional permissions to manage movie data.
 
 How to Run the Project:
