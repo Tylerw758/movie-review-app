@@ -3,6 +3,8 @@ Description: This project is a full-stack web application built using the MERN s
 
 How to Run the Project:
 
+To connect to Backend: A preconfigured .env file has been provided for the grader.
+
 To start Backend server 
 (runs on http://localhost:5000):
 cd server, npm install, node server.js
@@ -17,5 +19,6 @@ POST /api/auth/register, POST /api/auth/login, GET /api/auth/profile, GET /api/a
 MongoDB Database
 Name: MovieReview
 Collections: genres, movies, reviews, users, watchlists
+
 
 
