@@ -13,7 +13,8 @@ export default function MovieCard({ movie, onSelect, onWatchlist }) {
             alt={movie.title}
             className="poster-image"
             onError={(e) => {
-              e.target.style.display = "none";
+              e.target.onerror = null;
+              e.target.src = "/images/movie-placeholder.png";
             }}
           />
         ) : (

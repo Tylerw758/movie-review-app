@@ -13,36 +13,32 @@ export default function MovieList() {
   const [watchlist, setWatchlist] = useState([]);
   const [tab, setTab] = useState("want");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   const currentUser = JSON.parse(localStorage.getItem("user"))?.username;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const params = { page };
-        if (search) params.search = search;
-        if (genre !== "all") params.genre = genre;
-
-        const movieRes = await getMovies(params);
+        const movieRes = await getMovies();
         setMovies(movieRes.data.movies || []);
-        setTotalPages(movieRes.data.totalPages || 1);
         console.log("Movies loaded:", movieRes.data.movies || []);
       } catch (err) {
         console.error("Error loading movies:", err);
+        setMovies([]);
       }
 
       try {
         const genreRes = await getGenres();
-        setGenres(genreRes.data);
+        setGenres(genreRes.data || []);
         console.log("Genres loaded:", genreRes.data);
       } catch (err) {
         console.error("Error loading genres:", err);
+        setGenres([]);
       }
     };
 
     fetchData();
-  }, [search, genre, page]);
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -65,6 +61,8 @@ export default function MovieList() {
     fetchWatchlist();
   }, [currentUser]);
 
+  const MOVIES_PER_PAGE = 6;
+
   const filteredMovies = movies.filter((movie) => {
     const movieGenres =
       movie.genreIds?.map((g) => g?.name).filter(Boolean) || [];
@@ -78,14 +76,32 @@ export default function MovieList() {
     return matchesSearch && matchesGenre;
   });
 
-  const nowShowingMovies = filteredMovies.filter(
+  const sortedMovies = [...filteredMovies].sort((a, b) =>
+    (a.title || "").localeCompare(b.title || "")
+  );
+
+  const nowShowingMovies = sortedMovies.filter(
     (movie) => movie.nowShowing === true
   );
 
-  const featuredMovies =
-    nowShowingMovies.length > 0
-      ? nowShowingMovies.slice(0, 4)
-      : filteredMovies.slice(0, 4);
+  const moviesToDisplay =
+    nowShowingMovies.length > 0 ? nowShowingMovies : sortedMovies;
+
+  const computedTotalPages = Math.max(
+    1,
+    Math.ceil(moviesToDisplay.length / MOVIES_PER_PAGE)
+  );
+
+  useEffect(() => {
+    if (page > computedTotalPages) {
+      setPage(computedTotalPages);
+    }
+  }, [page, computedTotalPages]);
+
+  const startIndex = (page - 1) * MOVIES_PER_PAGE;
+  const endIndex = startIndex + MOVIES_PER_PAGE;
+
+  const featuredMovies = moviesToDisplay.slice(startIndex, endIndex);
 
   const addToWatchlist = async (movie) => {
     if (!currentUser) {
@@ -196,7 +212,14 @@ export default function MovieList() {
           )}
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "30px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "12px",
+            marginTop: "30px",
+          }}
+        >
           <button
             className="secondary-btn"
             onClick={() => setPage((p) => Math.max(p - 1, 1))}
@@ -206,13 +229,15 @@ export default function MovieList() {
           </button>
 
           <span style={{ alignSelf: "center" }}>
-            Page {page} of {totalPages}
+            Page {page} of {computedTotalPages}
           </span>
 
           <button
             className="secondary-btn"
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
+            onClick={() =>
+              setPage((p) => Math.min(p + 1, computedTotalPages))
+            }
+            disabled={page === computedTotalPages}
           >
             Next →
           </button>
