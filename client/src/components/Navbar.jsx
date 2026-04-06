@@ -28,10 +28,8 @@ export default function Navbar() {
 
         {/* Show logout only if user is logged in */}
         {user && (
-          <button onClick={handleLogout}>
-            Logout
-          </button>
-        )}
+        <a href="#logout" onClick={handleLogout}>Logout</a>
+    )}
       </nav>
     </header>
   );

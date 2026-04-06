@@ -6,33 +6,28 @@ export default function Reviews({ selectedMovie }) {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
 
- 
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("user"))?.username
   );
   const [currentRole, setCurrentRole] = useState(
-  JSON.parse(localStorage.getItem("user"))?.role
+    JSON.parse(localStorage.getItem("user"))?.role
   );
-  // Edit state
+
   const [editingId, setEditingId] = useState(null);
   const [editRating, setEditRating] = useState("");
   const [editComment, setEditComment] = useState("");
 
-  
   useEffect(() => {
     const handleStorageChange = () => {
       setCurrentUser(JSON.parse(localStorage.getItem("user"))?.username);
       setCurrentRole(JSON.parse(localStorage.getItem("user"))?.role);
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Fetch reviews when a movie is selected
   useEffect(() => {
     if (!selectedMovie) return;
-
     const fetchReviews = async () => {
       try {
         const res = await axios.get(
@@ -43,17 +38,14 @@ export default function Reviews({ selectedMovie }) {
         console.error("Error fetching reviews:", err);
       }
     };
-
     fetchReviews();
   }, [selectedMovie]);
 
-  // Submit review
   const submitReview = async () => {
     if (!comment) {
       alert("Fill out all fields");
       return;
     }
-
     try {
       const res = await axios.post(
         `http://localhost:5001/api/movies/${selectedMovie._id}/reviews`,
@@ -67,7 +59,6 @@ export default function Reviews({ selectedMovie }) {
     }
   };
 
-  // Delete review
   const deleteReview = async (reviewId) => {
     try {
       await axios.delete(
@@ -81,7 +72,6 @@ export default function Reviews({ selectedMovie }) {
     }
   };
 
-  // Edit review
   const editReview = async (reviewId) => {
     try {
       const res = await axios.put(
@@ -106,12 +96,12 @@ export default function Reviews({ selectedMovie }) {
         <p>Select a movie to see reviews</p>
       ) : (
         <>
-          {/* Existing Reviews */}
           <div className="review-list">
             {reviews.length > 0 ? (
               reviews.map((rev, index) => (
                 <div key={index} className="review-card">
                   {editingId === rev._id ? (
+                    // Edit mode
                     <>
                       <input
                         type="number"
@@ -124,27 +114,36 @@ export default function Reviews({ selectedMovie }) {
                         value={editComment}
                         onChange={(e) => setEditComment(e.target.value)}
                       />
-                      <button onClick={() => editReview(rev._id)}>Save</button>
-                      <button onClick={() => setEditingId(null)}>Cancel</button>
+                      <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+                        <button className="primary-btn" onClick={() => editReview(rev._id)}>Save</button>
+                        <button className="secondary-btn" onClick={() => setEditingId(null)}>Cancel</button>
+                      </div>
                     </>
                   ) : (
+                    // Display mode
                     <>
                       <h3>{rev.username}</h3>
                       <p><strong>Rating:</strong> {rev.rating}/5</p>
                       <p>{rev.comment}</p>
                       {(rev.username === currentUser || currentRole === "admin") && (
-                        <>
-                          <button onClick={() => {
-                            setEditingId(rev._id);
-                            setEditRating(rev.rating);
-                            setEditComment(rev.comment);
-                          }}>
+                        <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+                          <button
+                            className="secondary-btn"
+                            onClick={() => {
+                              setEditingId(rev._id);
+                              setEditRating(rev.rating);
+                              setEditComment(rev.comment);
+                            }}
+                          >
                             Edit
                           </button>
-                          <button onClick={() => deleteReview(rev._id)}>
+                          <button
+                            className="small-btn"
+                            onClick={() => deleteReview(rev._id)}
+                          >
                             Delete
                           </button>
-                        </>
+                        </div>
                       )}
                     </>
                   )}
@@ -155,10 +154,8 @@ export default function Reviews({ selectedMovie }) {
             )}
           </div>
 
-          {/* Add Review */}
           <div className="form-card" style={{ marginTop: "20px" }}>
             <h3>Write a Review</h3>
-            
             {currentUser ? (
               <p>Posting as: <strong>{currentUser}</strong></p>
             ) : (
