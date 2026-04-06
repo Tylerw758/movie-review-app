@@ -3,25 +3,18 @@ Description: This project is a full-stack web application built using the MERN s
 
 How to Run the Project:
 
-To start Backend server: 
-(runs on http://localhost:5000)
-cd server
-npm install
-node server.js
+To start Backend server 
+(runs on http://localhost:5000):
+cd server, npm install, node server.js
 
-To start Frontend server: 
+To start Frontend server 
 (runs on http://localhost:3000):
-cd client
-npm install
-npm start
+cd client, npm install, npm start
 
-API Routes:
-POST /api/auth/register
-POST /api/auth/login
-GET /api/auth/profile
-GET /api/auth/admin-test
+API Routes
+POST /api/auth/register, POST /api/auth/login, GET /api/auth/profile, GET /api/auth/admin-test
 
-MongoDB Database:
+MongoDB Database
 Name: MovieReview
 Collections: genres, movies, reviews, users, watchlists
 
