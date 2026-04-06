@@ -1,12 +1,21 @@
 export default function MovieCard({ movie, onSelect, onWatchlist }) {
-  const genreNames = movie.genreIds?.map((genre) => genre.name).join(", ") || "";
+  const genreNames =
+    movie.genreIds?.map((genre) => genre?.name).filter(Boolean).join(", ") || "N/A";
 
   return (
     <div className="movie-ticket">
       <div className="ticket-left">
         <span className="ticket-stamp">NOW SHOWING</span>
-        {movie.posterUrl ? (
-          <img src={movie.posterUrl} alt={movie.title} className="poster-image" />
+
+        {movie.posterUrl && movie.posterUrl !== "image" ? (
+          <img
+            src={movie.posterUrl}
+            alt={movie.title}
+            className="poster-image"
+            onError={(e) => {
+              e.target.style.display = "none";
+            }}
+          />
         ) : (
           <div className="poster-placeholder">🎬</div>
         )}
@@ -17,7 +26,7 @@ export default function MovieCard({ movie, onSelect, onWatchlist }) {
       <div className="ticket-right">
         <h3>{movie.title}</h3>
         <p><strong>Genre:</strong> {genreNames}</p>
-        <p><strong>Year:</strong> {movie.releaseYear}</p>
+        <p><strong>Year:</strong> {movie.releaseYear || "N/A"}</p>
 
         <div className="ticket-button-row">
           <button

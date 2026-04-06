@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -13,14 +15,15 @@ export default function Login() {
 
     try {
       const res = await loginUser({ username, password });
+
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data));
-
 
       window.dispatchEvent(new Event("storage"));
 
       console.log("Logged in user:", res.data);
-      alert("Logged in!");
+
+      navigate("/");
     } catch (err) {
       console.error("Login error", err);
       const message =
@@ -33,8 +36,15 @@ export default function Login() {
     <section className="panel-section" id="login">
       <div className="form-card">
         <h2>Login</h2>
-        <input placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+        <input
+          placeholder="Username"
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <button className="primary-btn" onClick={handleLogin}>
           Login
         </button>

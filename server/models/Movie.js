@@ -26,6 +26,10 @@ const movieSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    nowShowing: {
+      type: Boolean,
+      default: false,
+    },
     genreIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
