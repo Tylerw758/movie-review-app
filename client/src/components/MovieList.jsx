@@ -12,28 +12,15 @@ export default function MovieList() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [watchlist, setWatchlist] = useState([]);
   const [tab, setTab] = useState("want");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   const currentUser = JSON.parse(localStorage.getItem("user"))?.username;
 
-  // Fetch movies whenever search, genre, or page changes
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchData = async () => {
       try {
-<<<<<<< Updated upstream
-        const params = { page };
-        if (search) params.search = search;
-        if (genre !== "all") params.genre = genre;
-
-        const res = await getMovies(params);
-        setMovies(res.data.movies);
-        setTotalPages(res.data.totalPages);
-=======
         const movieRes = await getMovies();
         setMovies(movieRes.data);
         console.log("Movies loaded:", movieRes.data);
->>>>>>> Stashed changes
       } catch (err) {
         console.error("Error loading movies:", err);
       }
@@ -46,30 +33,8 @@ export default function MovieList() {
         console.error("Error loading genres:", err);
       }
     };
-<<<<<<< Updated upstream
-    fetchMovies();
-  }, [search, genre, page]);
-
-  // Reset to page 1 when search or genre changes
-  useEffect(() => {
-    setPage(1);
-  }, [search, genre]);
-
-  // Fetch genres once
-  useEffect(() => {
-    const fetchGenres = async () => {
-      try {
-        const res = await getGenres();
-        setGenres(res.data);
-      } catch (err) {
-        console.error("Error loading genres:", err);
-      }
-    };
-    fetchGenres();
-=======
 
     fetchData();
->>>>>>> Stashed changes
   }, []);
 
   useEffect(() => {
@@ -77,7 +42,9 @@ export default function MovieList() {
 
     const fetchWatchlist = async () => {
       try {
-        const res = await axios.get(`http://localhost:5001/api/watchlist/${currentUser}`);
+        const res = await axios.get(
+          `http://localhost:5001/api/watchlist/${currentUser}`
+        );
         setWatchlist(res.data);
       } catch (err) {
         console.error("Error fetching watchlist:", err);
@@ -87,18 +54,22 @@ export default function MovieList() {
     fetchWatchlist();
   }, [currentUser]);
 
-<<<<<<< Updated upstream
-  const addToWatchlist = async (movie) => {
-    if (!currentUser) return alert("You must be logged in to use the watchlist");
-=======
   const filteredMovies = movies.filter((movie) => {
-    const movieGenres = movie.genreIds?.map((g) => g?.name).filter(Boolean) || [];
-    const matchesSearch = movie.title?.toLowerCase().includes(search.toLowerCase());
-    const matchesGenre = genre === "all" || movieGenres.includes(genre);
+    const movieGenres =
+      movie.genreIds?.map((g) => g?.name).filter(Boolean) || [];
+
+    const matchesSearch =
+      movie.title?.toLowerCase().includes(search.toLowerCase());
+
+    const matchesGenre =
+      genre === "all" || movieGenres.includes(genre);
+
     return matchesSearch && matchesGenre;
   });
 
-  const nowShowingMovies = filteredMovies.filter((movie) => movie.nowShowing === true);
+  const nowShowingMovies = filteredMovies.filter(
+    (movie) => movie.nowShowing === true
+  );
 
   const featuredMovies =
     nowShowingMovies.length > 0
@@ -111,12 +82,14 @@ export default function MovieList() {
       return;
     }
 
->>>>>>> Stashed changes
     try {
-      const res = await axios.post("http://localhost:5001/api/watchlist", {
-        username: currentUser,
-        movieId: movie._id,
-      });
+      const res = await axios.post(
+        "http://localhost:5001/api/watchlist",
+        {
+          username: currentUser,
+          movieId: movie._id,
+        }
+      );
 
       setWatchlist((prev) => [...prev, res.data]);
       alert(`${movie.title} added to watchlist`);
@@ -137,7 +110,9 @@ export default function MovieList() {
       );
 
       setWatchlist((prev) =>
-        prev.map((entry) => (entry._id === entryId ? res.data : entry))
+        prev.map((entry) =>
+          entry._id === entryId ? res.data : entry
+        )
       );
     } catch (err) {
       console.error("Error updating status:", err);
@@ -146,20 +121,30 @@ export default function MovieList() {
 
   const removeFromWatchlist = async (entryId) => {
     try {
-      await axios.delete(`http://localhost:5001/api/watchlist/${entryId}`);
-      setWatchlist((prev) => prev.filter((entry) => entry._id !== entryId));
+      await axios.delete(
+        `http://localhost:5001/api/watchlist/${entryId}`
+      );
+
+      setWatchlist((prev) =>
+        prev.filter((entry) => entry._id !== entryId)
+      );
     } catch (err) {
       console.error("Error removing from watchlist:", err);
     }
   };
 
-  const filteredWatchlist = watchlist.filter((entry) => entry.status === tab);
+  const filteredWatchlist = watchlist.filter(
+    (entry) => entry.status === tab
+  );
+
   const selectedGenres =
-    selectedMovie?.genreIds?.map((g) => g?.name).filter(Boolean).join(", ") || "N/A";
+    selectedMovie?.genreIds
+      ?.map((g) => g?.name)
+      .filter(Boolean)
+      .join(", ") || "N/A";
 
   return (
     <>
-      {/* MOVIES SECTION */}
       <section className="panel-section" id="movies">
         <div className="section-title-wrap">
           <h2 className="section-title">Now Showing</h2>
@@ -172,7 +157,10 @@ export default function MovieList() {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <select onChange={(e) => setGenre(e.target.value)} value={genre}>
+          <select
+            onChange={(e) => setGenre(e.target.value)}
+            value={genre}
+          >
             <option value="all">All Genres</option>
             {genres.map((g) => (
               <option key={g._id} value={g.name}>
@@ -183,16 +171,6 @@ export default function MovieList() {
         </div>
 
         <div className="movie-grid">
-<<<<<<< Updated upstream
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie._id}
-              movie={movie}
-              onSelect={setSelectedMovie}
-              onWatchlist={addToWatchlist}
-            />
-          ))}
-=======
           {featuredMovies.length > 0 ? (
             featuredMovies.map((movie) => (
               <MovieCard
@@ -205,42 +183,11 @@ export default function MovieList() {
           ) : (
             <p>No movies match your filters.</p>
           )}
->>>>>>> Stashed changes
-        </div>
-
-        {/* Pagination */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "30px" }}>
-          <button
-            className="secondary-btn"
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
-            disabled={page === 1}
-          >
-            ← Prev
-          </button>
-          <span style={{ alignSelf: "center" }}>Page {page} of {totalPages}</span>
-          <button
-            className="secondary-btn"
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-          >
-            Next →
-          </button>
         </div>
       </section>
 
-      {/* MOVIE DETAILS */}
       <section className="panel-section" id="movieDetails">
         <div className="details-card">
-          {selectedMovie?.posterUrl ? (
-            <img
-              src={selectedMovie.posterUrl}
-              alt={selectedMovie.title}
-              className="details-poster-image"
-            />
-          ) : (
-            <div className="details-poster">🎞</div>
-          )}
-
           <div className="details-info">
             {selectedMovie ? (
               <>
@@ -259,7 +206,6 @@ export default function MovieList() {
 
       <Reviews selectedMovie={selectedMovie} />
 
-      {/* WATCHLIST */}
       <section className="panel-section" id="watchlist">
         <h2 className="section-title">Watchlist</h2>
 
@@ -279,22 +225,25 @@ export default function MovieList() {
           {filteredWatchlist.length > 0 ? (
             filteredWatchlist.map((entry) => (
               <div key={entry._id} className="watchlist-card">
-<<<<<<< Updated upstream
-                <h3>{entry.movieId?.title}</h3>
-=======
                 <h3>{entry.movieId?.title || "Untitled Movie"}</h3>
 
->>>>>>> Stashed changes
                 <select
                   value={entry.status}
-                  onChange={(e) => updateStatus(entry._id, e.target.value)}
+                  onChange={(e) =>
+                    updateStatus(entry._id, e.target.value)
+                  }
                 >
                   <option value="want">Want</option>
                   <option value="watching">Watching</option>
                   <option value="completed">Completed</option>
                   <option value="dropped">Dropped</option>
                 </select>
-                <button onClick={() => removeFromWatchlist(entry._id)}>Remove</button>
+
+                <button
+                  onClick={() => removeFromWatchlist(entry._id)}
+                >
+                  Remove
+                </button>
               </div>
             ))
           ) : (
