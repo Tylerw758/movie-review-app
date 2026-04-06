@@ -317,6 +317,13 @@ select {
   font-size: 2.5rem;
 }
 
+.poster-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
 .ticket-divider {
   width: 2px;
   background: repeating-linear-gradient(
