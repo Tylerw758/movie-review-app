@@ -1,30 +1,28 @@
 ﻿# WebDevGroup_Project
 Description: This project is a full-stack web application built using the MERN stack (MongoDB, Express.js, React, Node.js). The application allows users to create accounts, log in, and interact with a movie review system. Users can browse movies and leave reviews, while administrators have additional permissions to manage movie data.
 
-Technologies Used:
-
-Team Members & Roles:
-
 How to Run the Project:
-Backend
 
-Frontend
+To start Backend server: 
+(runs on http://localhost:5000)
+cd server
+npm install
+node server.js
 
-How to Access the Application:
-
-Authentication Features:
+To start Frontend server: 
+(runs on http://localhost:3000):
+cd client
+npm install
+npm start
 
 API Routes:
+POST /api/auth/register
+POST /api/auth/login
+GET /api/auth/profile
+GET /api/auth/admin-test
 
-MongoDB Database
+MongoDB Database:
 Name: MovieReview
-Collections:
+Collections: genres, movies, reviews, users, watchlists
 
-Data Model
-
-Many-to-Many Relationship:
-
-Functionality
-Admin:
-User:
 
