@@ -16,7 +16,7 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data));
 
-      // ✅ Manually fire storage event so Reviews.jsx picks up the new user
+
       window.dispatchEvent(new Event("storage"));
 
       console.log("Logged in user:", res.data);
