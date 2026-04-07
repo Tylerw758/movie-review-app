@@ -6,19 +6,15 @@ export default function Hero() {
         <p>
           Discover films, read reviews, and save your favorites like a stack of vintage movie tickets.
         </p>
-        <button className="primary-btn">Now Showing</button>
+        <button
+          className="primary-btn"
+          onClick={() =>
+            document.getElementById("movies").scrollIntoView({ behavior: "smooth" })
+          }
+        >
+          Now Showing
+        </button>
       </div>
     </section>
   );
 }
-
-<button
-  className="primary-btn"
-  onClick={() =>
-    document
-      .getElementById("movies")
-      .scrollIntoView({ behavior: "smooth" })
-  }
->
-  Now Showing
-</button>
