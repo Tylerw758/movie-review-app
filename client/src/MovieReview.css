@@ -373,6 +373,14 @@ select {
   border: 2px solid var(--gold);
 }
 
+.details-poster-image {
+  width: 180px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 2px solid var(--gold);
+}
+
 .details-info {
   flex: 1;
   min-width: 250px;

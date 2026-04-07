@@ -245,22 +245,32 @@ export default function MovieList() {
       </section>
 
       <section className="panel-section" id="movieDetails">
-        <div className="details-card">
-          <div className="details-info">
-            {selectedMovie ? (
-              <>
-                <h3>{selectedMovie.title}</h3>
-                <p><strong>Genre:</strong> {selectedGenres}</p>
-                <p><strong>Year:</strong> {selectedMovie.releaseYear || "N/A"}</p>
-                <p><strong>Director:</strong> {selectedMovie.director || "N/A"}</p>
-                <p><strong>Description:</strong> {selectedMovie.description || "N/A"}</p>
-              </>
-            ) : (
-              <h3>Select a movie ticket</h3>
-            )}
-          </div>
-        </div>
-      </section>
+  <div className="details-card">
+    {selectedMovie?.posterUrl ? (
+      <img
+        src={selectedMovie.posterUrl}
+        alt={selectedMovie.title}
+        className="details-poster-image"
+      />
+    ) : (
+      <div className="details-poster">🎞</div>
+    )}
+
+    <div className="details-info">
+      {selectedMovie ? (
+        <>
+          <h3>{selectedMovie.title}</h3>
+          <p><strong>Genre:</strong> {selectedGenres}</p>
+          <p><strong>Year:</strong> {selectedMovie.releaseYear || "N/A"}</p>
+          <p><strong>Director:</strong> {selectedMovie.director || "N/A"}</p>
+          <p><strong>Description:</strong> {selectedMovie.description || "N/A"}</p>
+        </>
+      ) : (
+        <h3>Select a movie ticket</h3>
+      )}
+    </div>
+  </div>
+</section>
 
       <Reviews selectedMovie={selectedMovie} />
 
