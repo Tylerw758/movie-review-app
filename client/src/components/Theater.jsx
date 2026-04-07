@@ -4,7 +4,7 @@ import Hero from "./Hero";
 import MovieList from "./MovieList";
 import Dashboard from "./Dashboard";
 import AdminPanel from "./AdminPanel";
-
+import Footer from "./Footer";
 export default function Theater() {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -15,6 +15,7 @@ export default function Theater() {
       <Dashboard />
       <MovieList />
       {user?.role === "admin" && <AdminPanel />}
+      <Footer />
     </>
   );
 }
