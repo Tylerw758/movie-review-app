@@ -5,7 +5,7 @@ import Genre from "../models/Genre.js";
 export const getMovies = async (req, res) => {
   try {
     const { search, genre, page = 1 } = req.query;
-    const limit = 9;
+    const limit = 15;
     const skip = (page - 1) * limit;
 
     // Build filter object
