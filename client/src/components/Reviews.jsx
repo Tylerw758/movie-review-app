@@ -1,6 +1,27 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const StarRating = ({ rating }) => {
+  return (
+    <div style={{ display: "flex", gap: "3px", margin: "6px 0" }}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span
+          key={i}
+          style={{
+            fontSize: "1.1rem",
+            color: i < rating ? "var(--gold)" : "#555",
+          }}
+        >
+          {i < rating ? "★" : "☆"}
+        </span>
+      ))}
+      <span style={{ fontSize: "0.85rem", color: "var(--cream)", marginLeft: "6px", alignSelf: "center" }}>
+        {rating}/5
+      </span>
+    </div>
+  );
+};
+
 export default function Reviews({ selectedMovie }) {
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(5);
@@ -101,7 +122,6 @@ export default function Reviews({ selectedMovie }) {
               reviews.map((rev, index) => (
                 <div key={index} className="review-card">
                   {editingId === rev._id ? (
-                    // Edit mode
                     <>
                       <input
                         type="number"
@@ -120,10 +140,9 @@ export default function Reviews({ selectedMovie }) {
                       </div>
                     </>
                   ) : (
-                    // Display mode
                     <>
                       <h3>{rev.username}</h3>
-                      <p><strong>Rating:</strong> {rev.rating}/5</p>
+                      <StarRating rating={rev.rating} />
                       <p>{rev.comment}</p>
                       {(rev.username === currentUser || currentRole === "admin") && (
                         <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
