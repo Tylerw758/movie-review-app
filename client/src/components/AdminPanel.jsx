@@ -26,7 +26,7 @@ export default function AdminPanel() {
   const fetchMovies = async () => {
     try {
       const res = await getMovies();
-      setMovies(res.data);
+      setMovies(res.data.movies || []); // ✅ fixed
     } catch (err) {
       console.error("Error fetching movies:", err);
     }
@@ -58,7 +58,6 @@ export default function AdminPanel() {
     const selectedOptions = Array.from(e.target.selectedOptions).map(
       (option) => option.value
     );
-
     setMovie({
       ...movie,
       genreIds: selectedOptions,
@@ -110,9 +109,10 @@ export default function AdminPanel() {
       releaseYear: movieToEdit.releaseYear || "",
       director: movieToEdit.director || "",
       posterUrl: movieToEdit.posterUrl || "",
-      genreIds: movieToEdit.genreIds ? movieToEdit.genreIds.map((g) => g._id) : [],
+      genreIds: movieToEdit.genreIds
+        ? movieToEdit.genreIds.map((g) => g._id)
+        : [],
     });
-
     setEditingId(movieToEdit._id);
   };
 
@@ -215,13 +215,11 @@ export default function AdminPanel() {
 
       <div className="admin-movie-list">
         <h3>Manage Movies</h3>
-
         {movies.map((m) => (
           <div key={m._id} className="admin-movie-item">
             <p>
               <strong>{m.title}</strong> ({m.releaseYear})
             </p>
-
             <button onClick={() => handleEdit(m)}>Edit</button>
             <button onClick={() => handleDelete(m._id)}>Delete</button>
           </div>
