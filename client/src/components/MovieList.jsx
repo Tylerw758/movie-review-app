@@ -21,7 +21,6 @@ export default function MovieList() {
       try {
         const movieRes = await getMovies();
         setMovies(movieRes.data.movies || []);
-        console.log("Movies loaded:", movieRes.data.movies || []);
       } catch (err) {
         console.error("Error loading movies:", err);
         setMovies([]);
@@ -30,7 +29,6 @@ export default function MovieList() {
       try {
         const genreRes = await getGenres();
         setGenres(genreRes.data || []);
-        console.log("Genres loaded:", genreRes.data);
       } catch (err) {
         console.error("Error loading genres:", err);
         setGenres([]);
@@ -66,13 +64,10 @@ export default function MovieList() {
   const filteredMovies = movies.filter((movie) => {
     const movieGenres =
       movie.genreIds?.map((g) => g?.name).filter(Boolean) || [];
-
     const matchesSearch =
       movie.title?.toLowerCase().includes(search.toLowerCase());
-
     const matchesGenre =
       genre === "all" || movieGenres.includes(genre);
-
     return matchesSearch && matchesGenre;
   });
 
@@ -100,7 +95,6 @@ export default function MovieList() {
 
   const startIndex = (page - 1) * MOVIES_PER_PAGE;
   const endIndex = startIndex + MOVIES_PER_PAGE;
-
   const featuredMovies = moviesToDisplay.slice(startIndex, endIndex);
 
   const addToWatchlist = async (movie) => {
@@ -108,16 +102,11 @@ export default function MovieList() {
       alert("You must be logged in to use the watchlist");
       return;
     }
-
     try {
       const res = await axios.post(
         "http://localhost:5001/api/watchlist",
-        {
-          username: currentUser,
-          movieId: movie._id,
-        }
+        { username: currentUser, movieId: movie._id }
       );
-
       setWatchlist((prev) => [...prev, res.data]);
       alert(`${movie.title} added to watchlist`);
     } catch (err) {
@@ -135,11 +124,8 @@ export default function MovieList() {
         `http://localhost:5001/api/watchlist/${entryId}`,
         { status: newStatus }
       );
-
       setWatchlist((prev) =>
-        prev.map((entry) =>
-          entry._id === entryId ? res.data : entry
-        )
+        prev.map((entry) => (entry._id === entryId ? res.data : entry))
       );
     } catch (err) {
       console.error("Error updating status:", err);
@@ -148,10 +134,7 @@ export default function MovieList() {
 
   const removeFromWatchlist = async (entryId) => {
     try {
-      await axios.delete(
-        `http://localhost:5001/api/watchlist/${entryId}`
-      );
-
+      await axios.delete(`http://localhost:5001/api/watchlist/${entryId}`);
       setWatchlist((prev) =>
         prev.filter((entry) => entry._id !== entryId)
       );
@@ -160,9 +143,7 @@ export default function MovieList() {
     }
   };
 
-  const filteredWatchlist = watchlist.filter(
-    (entry) => entry.status === tab
-  );
+  const filteredWatchlist = watchlist.filter((entry) => entry.status === tab);
 
   const selectedGenres =
     selectedMovie?.genreIds
@@ -172,6 +153,7 @@ export default function MovieList() {
 
   return (
     <>
+      {/* MOVIES SECTION */}
       <section className="panel-section" id="movies">
         <div className="section-title-wrap">
           <h2 className="section-title">Now Showing</h2>
@@ -183,16 +165,10 @@ export default function MovieList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
-          <select
-            onChange={(e) => setGenre(e.target.value)}
-            value={genre}
-          >
+          <select onChange={(e) => setGenre(e.target.value)} value={genre}>
             <option value="all">All Genres</option>
             {genres.map((g) => (
-              <option key={g._id} value={g.name}>
-                {g.name}
-              </option>
+              <option key={g._id} value={g.name}>{g.name}</option>
             ))}
           </select>
         </div>
@@ -212,14 +188,7 @@ export default function MovieList() {
           )}
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "12px",
-            marginTop: "30px",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "30px" }}>
           <button
             className="secondary-btn"
             onClick={() => setPage((p) => Math.max(p - 1, 1))}
@@ -227,16 +196,12 @@ export default function MovieList() {
           >
             ← Prev
           </button>
-
           <span style={{ alignSelf: "center" }}>
             Page {page} of {computedTotalPages}
           </span>
-
           <button
             className="secondary-btn"
-            onClick={() =>
-              setPage((p) => Math.min(p + 1, computedTotalPages))
-            }
+            onClick={() => setPage((p) => Math.min(p + 1, computedTotalPages))}
             disabled={page === computedTotalPages}
           >
             Next →
@@ -244,36 +209,37 @@ export default function MovieList() {
         </div>
       </section>
 
+      {/* MOVIE DETAILS */}
       <section className="panel-section" id="movieDetails">
-  <div className="details-card">
-    {selectedMovie?.posterUrl ? (
-      <img
-        src={selectedMovie.posterUrl}
-        alt={selectedMovie.title}
-        className="details-poster-image"
-      />
-    ) : (
-      <div className="details-poster">🎞</div>
-    )}
-
-    <div className="details-info">
-      {selectedMovie ? (
-        <>
-          <h3>{selectedMovie.title}</h3>
-          <p><strong>Genre:</strong> {selectedGenres}</p>
-          <p><strong>Year:</strong> {selectedMovie.releaseYear || "N/A"}</p>
-          <p><strong>Director:</strong> {selectedMovie.director || "N/A"}</p>
-          <p><strong>Description:</strong> {selectedMovie.description || "N/A"}</p>
-        </>
-      ) : (
-        <h3>Select a movie ticket</h3>
-      )}
-    </div>
-  </div>
-</section>
+        <div className="details-card">
+          {selectedMovie?.posterUrl ? (
+            <img
+              src={selectedMovie.posterUrl}
+              alt={selectedMovie.title}
+              className="details-poster-image"
+            />
+          ) : (
+            <div className="details-poster">🎞</div>
+          )}
+          <div className="details-info">
+            {selectedMovie ? (
+              <>
+                <h3>{selectedMovie.title}</h3>
+                <p><strong>Genre:</strong> {selectedGenres}</p>
+                <p><strong>Year:</strong> {selectedMovie.releaseYear || "N/A"}</p>
+                <p><strong>Director:</strong> {selectedMovie.director || "N/A"}</p>
+                <p><strong>Description:</strong> {selectedMovie.description || "N/A"}</p>
+              </>
+            ) : (
+              <h3>Select a movie ticket</h3>
+            )}
+          </div>
+        </div>
+      </section>
 
       <Reviews selectedMovie={selectedMovie} />
 
+      {/* WATCHLIST */}
       <section className="panel-section" id="watchlist">
         <h2 className="section-title">Watchlist</h2>
 
@@ -292,23 +258,63 @@ export default function MovieList() {
         <div className="watchlist-content">
           {filteredWatchlist.length > 0 ? (
             filteredWatchlist.map((entry) => (
-              <div key={entry._id} className="watchlist-card">
-                <h3>{entry.movieId?.title || "Untitled Movie"}</h3>
+              <div
+                key={entry._id}
+                className="watchlist-card"
+                style={{ display: "flex", alignItems: "center", gap: "16px" }}
+              >
+                {/* Poster thumbnail */}
+                {entry.movieId?.posterUrl ? (
+                  <img
+                    src={entry.movieId.posterUrl}
+                    alt={entry.movieId.title}
+                    style={{
+                      width: "55px",
+                      height: "80px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      border: "2px solid var(--gold)",
+                      flexShrink: 0,
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: "55px",
+                    height: "80px",
+                    borderRadius: "8px",
+                    border: "2px solid var(--gold)",
+                    background: "linear-gradient(to bottom, var(--burgundy), var(--dark-brown))",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.5rem",
+                    flexShrink: 0,
+                  }}>
+                    🎬
+                  </div>
+                )}
 
-                <select
-                  value={entry.status}
-                  onChange={(e) =>
-                    updateStatus(entry._id, e.target.value)
-                  }
-                >
-                  <option value="want">Want</option>
-                  <option value="watching">Watching</option>
-                  <option value="completed">Completed</option>
-                  <option value="dropped">Dropped</option>
-                </select>
+                {/* Info */}
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ marginBottom: "8px" }}>
+                    {entry.movieId?.title || "Untitled Movie"}
+                  </h3>
+                  <select
+                    value={entry.status}
+                    onChange={(e) => updateStatus(entry._id, e.target.value)}
+                  >
+                    <option value="want">Want</option>
+                    <option value="watching">Watching</option>
+                    <option value="completed">Completed</option>
+                    <option value="dropped">Dropped</option>
+                  </select>
+                </div>
 
+                {/* Remove button */}
                 <button
+                  className="small-btn"
                   onClick={() => removeFromWatchlist(entry._id)}
+                  style={{ flexShrink: 0 }}
                 >
                   Remove
                 </button>
